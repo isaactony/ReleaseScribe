@@ -1,6 +1,6 @@
 # ReleaseScribe
 
-AI-powered release notes generator using Anthropic Claude
+AI-powered release notes generator using Anthropic Claude Java SDK
 
 ## Features
 
