@@ -1,0 +1,33 @@
+version: 1
+audiences:
+  - dev
+  - customer
+sections:
+  - features
+  - fixes
+  - perf
+  - security
+  - breaking
+  - upgrade
+  - docs
+conventions:
+  commitStyle: conventional # or simple
+  componentPaths:
+    api: ["service-api/**", "src/main/java/com/example/api/**"]
+    ui:  ["web/**", "frontend/**"]
+    infra: ["helm/**", "terraform/**"]
+labelMapping:
+  feature: ["feature", "enhancement", "feat"]
+  fix: ["bug", "fix", "bugfix"]
+  security: ["security", "deps:security"]
+  perf: ["performance", "perf"]
+  docs: ["docs"]
+prompt:
+  tone: crisp
+  changelogStyle: "Keep a Changelog"
+  forbid:
+    - marketing fluff
+    - unverifiable claims
+limits:
+  maxPrs: 200
+  maxTokens: 2000
