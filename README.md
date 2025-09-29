@@ -82,6 +82,34 @@ java -jar target/relnotes-1.0.0.jar \
   --confluence-space "PROD"
 ```
 
+### Publishing to Slack
+```bash
+export SLACK_BOT_TOKEN="xoxb-your-slack-bot-token"
+export SLACK_CHANNEL="#releases"
+java -jar target/relnotes-1.0.0.jar \
+  --provider github \
+  --owner your-org \
+  --repo your-repo \
+  --since-tag v1.0.0 \
+  --publish slack \
+  --slack-channel "#releases"
+```
+
+### Publishing to Multiple Platforms
+```bash
+# Publish to both GitHub Releases and Slack
+export GITHUB_TOKEN="your-github-token"
+export SLACK_BOT_TOKEN="xoxb-your-slack-bot-token"
+java -jar target/relnotes-1.0.0.jar \
+  --provider github \
+  --owner your-org \
+  --repo your-repo \
+  --since-tag v1.0.0 \
+  --publish github,slack \
+  --release-tag v1.2.0 \
+  --slack-channel "#engineering"
+```
+
 ### Custom Configuration
 Create a `.relnotes.yml` file to customize categorization, formatting, and component detection:
 
@@ -101,6 +129,44 @@ labelMapping:
   fix: ["bug", "fix", "bugfix"]
 ```
 
+## Publishing Options
+
+ReleaseScribe supports publishing to multiple platforms simultaneously:
+
+### Available Publishers
+- **GitHub Releases**: Automatically create GitHub releases with generated notes
+- **Confluence**: Publish to Confluence pages for team documentation
+- **Slack**: Send release summaries to Slack channels
+- **Files**: Generate local Markdown and HTML files (default)
+
+### Publisher Configuration
+
+Each publisher requires specific environment variables:
+
+| Publisher | Required Environment Variables | Additional Options |
+|-----------|-------------------------------|-------------------|
+| GitHub | `GITHUB_TOKEN` | `--release-tag` |
+| Confluence | `CONFLUENCE_URL`, `CONFLUENCE_TOKEN` | `--confluence-space` |
+| Slack | `SLACK_BOT_TOKEN` | `--slack-channel` |
+| Files | None | Output directory via `--output-dir` |
+
+### Publisher-Specific Examples
+
+**Slack Integration:**
+- Requires a Slack bot with `chat:write` permissions
+- Bot must be invited to the target channel
+- Token format: `xoxb-...`
+
+**Confluence Integration:**
+- Requires Confluence API token or personal access token
+- Specify space key (e.g., "PROD", "ENG")
+- Creates new page or updates existing one
+
+**GitHub Releases:**
+- Requires GitHub token with `repo` scope
+- Creates release with tag and release notes
+- Supports draft and prerelease flags
+
 ## Building
 
 ```bash
@@ -111,17 +177,23 @@ mvn clean package
 
 ### GitHub Actions
 ```yaml
-- name: Generate Release Notes
+- name: Generate and Publish Release Notes
   env:
     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    CONFLUENCE_URL: ${{ secrets.CONFLUENCE_URL }}
+    CONFLUENCE_TOKEN: ${{ secrets.CONFLUENCE_TOKEN }}
   run: |
     java -jar target/relnotes-1.0.0.jar \
       --provider github \
       --owner ${{ github.repository_owner }} \
       --repo ${{ github.event.repository.name }} \
       --since-tag ${{ github.event.release.tag_name }} \
-      --publish github
+      --publish github,slack,confluence \
+      --release-tag ${{ github.event.release.tag_name }} \
+      --slack-channel "#releases" \
+      --confluence-space "PROD"
 ```
 
 ### Jenkins Pipeline
