@@ -29,6 +29,8 @@ ReleaseScribe is a comprehensive release management tool that transforms your Gi
 - **CI/CD Integration**: Ready-to-use Jenkins and GitHub Actions workflows
 - **Smart Filtering**: Handles large repositories with intelligent change filtering
 
+  Here is an example of a changelogs generated 
+
   <img width="1904" height="1862" alt="image" src="https://github.com/user-attachments/assets/6fb3811f-050b-414a-8775-a6aa17a96fd6" />
 
 
